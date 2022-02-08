@@ -1,4 +1,7 @@
 #include <stdio.h>
+
+
+
 int main() {   
 
     printf('Starting Game');  
@@ -6,9 +9,9 @@ int main() {
     return 0;
 }
 
-int initialize_board() {
-    // get empty board
-    return 0;
+void run_game() {
+    int board[3][3] = [[NULL,NULL,NULL],[NULL,NULL,NULL],[NULL,NULL,NULL]];
+    
 }
 
 int make_move() {
