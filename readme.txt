@@ -1,5 +1,5 @@
 Luis Neumeier und Marc Hau
-2022
+2025
 
 
 Vier Gewinnt mit GUI im Terminal
