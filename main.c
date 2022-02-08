@@ -40,7 +40,7 @@ char check_for_win(char board[3][3]) { //returns character of player who won or 
     return '_';
 }
 
-void check_for_input(char board[3][3], int turnindex) {
+int check_for_input(char board[3][3], int turnindex) {
     char playerchar;
     if (turnindex % 2 == 0)  {
         playerchar = 'X';
@@ -51,11 +51,13 @@ void check_for_input(char board[3][3], int turnindex) {
     printf("Please enter index to place your ");
     printf("%c ", playerchar);
     printf("\n");
-    int i = (int) getchar();
-    int rowindex = i % 3;
-    int columnindex = (i-(i%3)) / 3;
+    int i;
+    scanf("%d", &i);
+    i = i - 1;
+    int columnindex = i % 3;
+    int rowindex = (i-(i%3)) / 3;
     if (board[rowindex][columnindex] == '_') {
-        board[rowindex][columnindex] = playerchar;
+        return i;
     } 
     else {
         printf("Not possible!\n");
@@ -65,31 +67,47 @@ void check_for_input(char board[3][3], int turnindex) {
 
 void run_game() {
     char board[3][3]= {{'_','_','_'},{'_','_','_'},{'_','_','_'}};
-    print_board(board);
-
+    
     int turnindex = 0;
 
-    while (check_for_win(board) == '_') {
-        check_for_input(board, turnindex);
+    int playerchoice;
+    while (check_for_win(board) == '_' && turnindex < 9) {
+        printf("\n");
+        print_board(board);
+        playerchoice = check_for_input(board, turnindex);
+        char playerchar;
+        if (turnindex % 2 == 0)  {
+            playerchar = 'X';
+        }
+        else {
+            playerchar = 'O';
+        }
+        board[(playerchoice-(playerchoice%3)) / 3][playerchoice%3] = playerchar;
         turnindex += 1;
     }
 
     // game ended
-    char playerchar;
-    if (turnindex % 2 == 0)  {
-        playerchar = 'X';
+    printf("\n");
+    print_board(board);
+    
+    if (turnindex == 9) {
+        printf("You both suck. That's a draw!");
     }
     else {
-        playerchar = 'O';
+        char playerchar;
+        if (turnindex % 2 == 0)  {
+            playerchar = 'X';
+        }
+        else {
+            playerchar = 'O';
+        }
+        printf("CONGRATULATIONS! Player ");
+        printf("%c ", playerchar);
+        printf(" won.\n");
     }
-    printf("CONGRATULATIONS! Player ");
-    printf("%c ", playerchar);
-    printf(" won.\n");
+
+    
 }
-
-
-
-
 
 
 

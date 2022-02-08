@@ -6,7 +6,7 @@ void fun(int arr[])  // SAME AS void fun(int *arr)
 {
    unsigned int n = sizeof(arr)/sizeof(arr[0]);
    printf("\nArray size inside fun() is %d", n);
-   printf(arr[0][0]);
+
 }
  
 // Driver program
