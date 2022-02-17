@@ -40,20 +40,79 @@ char check_for_win(char board[3][3]) { //returns character of player who won or 
     return '_';
 }
 
+int minmax (char board[3][3], int isMax) {
+    char winner = check_for_win(board);
+     
+    if (winner == 'O') {
+        int score = 1;
+        return score;
+    } else if (winner == 'X') {
+        int score = -1;
+        return score;
+    }
+    
+    if (isMax == 1){
+        int bestScore = -100;
+        for (int i=0; i < 3; i++){
+            for (int j=0; j < 3; j++) {
+                if (board[i][j] == '_') {
+                    board[i][j] = 'O';
+                    int score = minmax(board, 0);
+                    board[i][j] = '_';
+                    if (score > bestScore) {
+                        bestScore = score;
+                    }
+                }
+            }
+        }
+        return bestScore;
+    } else {
+        int bestScore = 100;
+        for (int i=0; i < 3; i++){
+            for (int j=0; j < 3; j++) {
+                if (board[i][j] == '_') {
+                    board[i][j] = 'X';
+                    int score = minmax(board, 1);
+                    board[i][j] = '_';
+                    if (score < bestScore) {
+                        bestScore = score;
+                    }
+                }
+            }
+        }
+        return bestScore;
+    }
+}
+
+void bestMove(char board[3][3], int *move) {
+    int bestScore = -100;
+
+    for (int i=0; i < 3; i++){
+        for (int j=0; j < 3; j++) {
+            if (board[i][j] == '_') {
+                board[i][j] == 'O';
+                int score = minmax(board, 0);
+                board[i][j] = '_';
+                if (score > bestScore) {
+                    bestScore = score;
+                    move[0] = i;
+                    move[1] = j;
+                }
+            }
+        }
+    }
+}
+
 int check_for_input(char board[3][3], int turnindex) {
-    char playerchar;
-    if (turnindex % 2 == 0)  {
-        playerchar = 'X';
-    }
-    else {
-        playerchar = 'O';
-    }
+    char playerchar = 'X';
+
     printf("Please enter index to place your ");
     printf("%c ", playerchar);
     printf("\n");
     int i;
     scanf("%d", &i);
     i = i - 1;
+
     int columnindex = i % 3;
     int rowindex = (i-(i%3)) / 3;
     if (board[rowindex][columnindex] == '_') {
@@ -71,19 +130,29 @@ void run_game() {
     int turnindex = 0;
 
     int playerchoice;
+
     while (check_for_win(board) == '_' && turnindex < 9) {
-        printf("\n");
-        print_board(board);
-        playerchoice = check_for_input(board, turnindex);
-        char playerchar;
         if (turnindex % 2 == 0)  {
-            playerchar = 'X';
+            printf("\n");
+            print_board(board);
+            playerchoice = check_for_input(board, turnindex);
+            char playerchar = 'X';
+
+            board[(playerchoice-(playerchoice%3)) / 3][playerchoice%3] = playerchar;
+            turnindex += 1;
+        } else {
+            
+            
+            int move[2];
+            
+            print_board(board);
+            printf("\n Com: \n");
+            
+            bestMove(board, move);
+
+            board[move[0]][move[1]] = 'O';
+            turnindex += 1;
         }
-        else {
-            playerchar = 'O';
-        }
-        board[(playerchoice-(playerchoice%3)) / 3][playerchoice%3] = playerchar;
-        turnindex += 1;
     }
 
     // game ended
@@ -108,8 +177,6 @@ void run_game() {
 
     
 }
-
-
 
 int main() {   
 
