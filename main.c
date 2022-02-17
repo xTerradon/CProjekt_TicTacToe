@@ -90,7 +90,7 @@ void bestMove(char board[3][3], int *move) {
     for (int i=0; i < 3; i++){
         for (int j=0; j < 3; j++) {
             if (board[i][j] == '_') {
-                board[i][j] == 'O';
+                board[i][j] = 'O';
                 int score = minmax(board, 0);
                 board[i][j] = '_';
                 if (score > bestScore) {
