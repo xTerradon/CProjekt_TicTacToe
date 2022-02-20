@@ -13,51 +13,69 @@ void print_board(char board[3][3]) {
 }
 
 char check_for_win(char board[3][3]) { //returns character of player who won or _
-    if (board[0][0] == board[0][1] && board[0][0] == board[0][2]) {
-        return board[0][0];
+    char winner = NULL;
+
+    for (int i = 0; i < 3; i++) {
+        if (board[i][0] == board[i][1] && board[i][0] == board[i][2]) {
+            winner = board[i][0];
+        }
     }
-    if (board[1][0] == board[1][1] && board[1][0] == board[1][2]) {
-        return board[1][0];
+    
+    for (int i = 0; i < 3; i++) {
+        if (board[0][i] == board[1][i] && board[0][i] == board[2][i]) {
+            winner = board[0][i];
+        }
     }
-    if (board[2][0] == board[2][1] && board[2][0] == board[2][2]) {
-        return board[2][0];
-    }
+    
     if (board[0][0] == board[1][1] && board[0][0] == board[2][2]) {
-        return board[0][0];
+        winner = board[0][0];
     }
     if (board[2][0] == board[1][1] && board[2][0] == board[0][2]) {
-        return board[2][0];
+        winner = board[2][0];
     }
-    if (board[0][0] == board[1][0] && board[0][0] == board[2][0]) {
-        return board[0][0];
+    
+    int open = 0;
+    for (int i=0; i < 3; i++){
+        for (int j=0; j < 3; j++) { 
+            if (board[i][j] == '_') {
+                open++;
+            }
+        }
     }
-    if (board[0][1] == board[1][1] && board[0][1] == board[2][1]) {
-        return board[0][1];
+    
+    if (winner == NULL && open == 0) {
+        return 't';
+    } else {
+        return winner;
     }
-    if (board[0][2] == board[1][2] && board[0][2] == board[2][2]) {
-        return board[0][2];
-    }
-    return '_';
+    
 }
 
 int minmax (char board[3][3], int isMax) {
     char winner = check_for_win(board);
-     
+    
     if (winner == 'O') {
         int score = 1;
         return score;
+        
     } else if (winner == 'X') {
         int score = -1;
         return score;
+        
+    } else if (winner == 't') {
+        int score = 0;
+        return score;
+        
     }
     
-    if (isMax == 1){
+    if (isMax == 1) {
         int bestScore = -100;
         for (int i=0; i < 3; i++){
             for (int j=0; j < 3; j++) {
                 if (board[i][j] == '_') {
                     board[i][j] = 'O';
                     int score = minmax(board, 0);
+                    //printf ("(w: %c, s:%d [%d][%d]), ", winner, score, i, j);
                     board[i][j] = '_';
                     if (score > bestScore) {
                         bestScore = score;
@@ -68,11 +86,12 @@ int minmax (char board[3][3], int isMax) {
         return bestScore;
     } else {
         int bestScore = 100;
-        for (int i=0; i < 3; i++){
+        for (int i=0; i < 3; i++) {
             for (int j=0; j < 3; j++) {
                 if (board[i][j] == '_') {
                     board[i][j] = 'X';
                     int score = minmax(board, 1);
+                    //printf ("(w: %c, s:%d [%d][%d]), ", winner, score, i, j);
                     board[i][j] = '_';
                     if (score < bestScore) {
                         bestScore = score;
@@ -131,7 +150,7 @@ void run_game() {
 
     int playerchoice;
 
-    while (check_for_win(board) == '_' && turnindex < 9) {
+    while (turnindex < 9) {
         if (turnindex % 2 == 0)  {
             printf("\n");
             print_board(board);
@@ -153,23 +172,21 @@ void run_game() {
             board[move[0]][move[1]] = 'O';
             turnindex += 1;
         }
+        
+        if (check_for_win(board) == 'X' || check_for_win(board) == 'O') {
+            break;
+        }
     }
 
     // game ended
     printf("\n");
     print_board(board);
     
-    if (turnindex == 9) {
+    if (check_for_win(board) == 't') {
         printf("You both suck. That's a draw!");
-    }
-    else {
-        char playerchar;
-        if (turnindex % 2 == 0)  {
-            playerchar = 'X';
-        }
-        else {
-            playerchar = 'O';
-        }
+    } else {
+        char playerchar = check_for_win(board);
+        
         printf("CONGRATULATIONS! Player ");
         printf("%c ", playerchar);
         printf(" won.\n");
