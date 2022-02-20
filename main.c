@@ -10,21 +10,24 @@ void print_board(char board[3][3]) {
     //prints board
 }
 
-char check_for_win(char board[3][3]) { //returns character of player who won or _
+char check_for_win(char board[3][3]) { //returns character of player who won or tie
     char winner = NULL;
 
+    // horizontal
     for (int i = 0; i < 3; i++) {
         if (board[i][0] == board[i][1] && board[i][0] == board[i][2]) {
             winner = board[i][0];
         }
     }
     
+    // vertical
     for (int i = 0; i < 3; i++) {
         if (board[0][i] == board[1][i] && board[0][i] == board[2][i]) {
             winner = board[0][i];
         }
     }
     
+    // diagonal
     if (board[0][0] == board[1][1] && board[0][0] == board[2][2]) {
         winner = board[0][0];
     }
@@ -32,6 +35,7 @@ char check_for_win(char board[3][3]) { //returns character of player who won or 
         winner = board[2][0];
     }
     
+    //openspots (for tie)
     int open = 0;
     for (int i=0; i < 3; i++){
         for (int j=0; j < 3; j++) { 
@@ -42,16 +46,16 @@ char check_for_win(char board[3][3]) { //returns character of player who won or 
     }
     
     if (winner == NULL && open == 0) {
-        return 't';
+        return 't'; //tie
     } else {
         return winner;
     }
-    
 }
 
 int minmax (char board[3][3], int isMax) {
     char winner = check_for_win(board);
     
+    // rate an endpoint
     if (winner == 'O') {
         int score = 1;
         return score;
@@ -66,6 +70,7 @@ int minmax (char board[3][3], int isMax) {
         
     }
     
+    // alternate maximizing and minimizing player 
     if (isMax == 1) {
         int bestScore = -100;
         for (int i=0; i < 3; i++){
@@ -73,7 +78,6 @@ int minmax (char board[3][3], int isMax) {
                 if (board[i][j] == '_') {
                     board[i][j] = 'O';
                     int score = minmax(board, 0);
-                    //printf ("(w: %c, s:%d [%d][%d]), ", winner, score, i, j);
                     board[i][j] = '_';
                     if (score > bestScore) {
                         bestScore = score;
@@ -89,7 +93,6 @@ int minmax (char board[3][3], int isMax) {
                 if (board[i][j] == '_') {
                     board[i][j] = 'X';
                     int score = minmax(board, 1);
-                    //printf ("(w: %c, s:%d [%d][%d]), ", winner, score, i, j);
                     board[i][j] = '_';
                     if (score < bestScore) {
                         bestScore = score;
@@ -120,9 +123,7 @@ void bestMove(char board[3][3], int *move) {
     }
 }
 
-int check_for_input(char board[3][3], int turnindex) {
-    char playerchar = 'X';
-
+int check_for_input(char board[3][3], int turnindex, char playerchar) {
     printf("Please enter index to place your ");
     printf("%c ", playerchar);
     printf("\n");
@@ -137,41 +138,47 @@ int check_for_input(char board[3][3], int turnindex) {
     } 
     else {
         printf("Not possible!\n");
-        check_for_input(board, turnindex);
+        check_for_input(board, turnindex, playerchar);
     }
 }
 
-void run_game() {
+void run_game(int playercount) {
     char board[3][3]= {{'_','_','_'},{'_','_','_'},{'_','_','_'}};
-    
     int turnindex = 0;
-
     int playerchoice;
 
-    while (turnindex < 9) {
-        if (turnindex % 2 == 0)  {
+    while (turnindex < 9) { //runs until the board is filled or ...
+        if (turnindex % 2 == 0)  {  //player 1
             printf("\n");
             print_board(board);
-            playerchoice = check_for_input(board, turnindex);
             char playerchar = 'X';
+            playerchoice = check_for_input(board, turnindex, playerchar);
 
             board[(playerchoice-(playerchoice%3)) / 3][playerchoice%3] = playerchar;
             turnindex += 1;
         } else {
-            
-            
-            int move[2];
-            
-            print_board(board);
-            printf("\n Com: \n");
-            
-            bestMove(board, move);
-
-            board[move[0]][move[1]] = 'O';
-            turnindex += 1;
+            if (playercount == 1) { //computer
+                int move[2];
+                
+                print_board(board);
+                printf("\n Com:");
+                
+                bestMove(board, move);
+    
+                board[move[0]][move[1]] = 'O';
+                turnindex += 1;
+            } else { // player 2
+                printf("\n");
+                print_board(board);
+                char playerchar = 'O';
+                playerchoice = check_for_input(board, turnindex, playerchar);
+    
+                board[(playerchoice-(playerchoice%3)) / 3][playerchoice%3] = playerchar;
+                turnindex += 1;
+            }
         }
         
-        if (check_for_win(board) == 'X' || check_for_win(board) == 'O') {
+        if (check_for_win(board) == 'X' || check_for_win(board) == 'O') { //... someone has won
             break;
         }
     }
@@ -196,7 +203,11 @@ void run_game() {
 int main() {   
 
     printf("Starting Game...\n"); 
-    run_game();
+    printf("do you want to play against the computer (1) or a friend (2) ?\n"); 
+    int playercount = 1;
+    scanf("%d", &playercount);
+    
+    run_game(playercount);
 
     return 0;
 }
