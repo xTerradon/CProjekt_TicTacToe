@@ -11,7 +11,7 @@ void print_board(char board[3][3]) {
 }
 
 char check_for_win(char board[3][3]) { //returns character of player who won or tie
-    char winner = NULL;
+    char winner = '_';
 
     // horizontal
     for (int i = 0; i < 3; i++) {
@@ -45,7 +45,7 @@ char check_for_win(char board[3][3]) { //returns character of player who won or 
         }
     }
     
-    if (winner == NULL && open == 0) {
+    if (winner == '_' && open == 0) {
         return 't'; //tie
     } else {
         return winner;
